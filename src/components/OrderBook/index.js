@@ -11,17 +11,26 @@ import TradeContext from '../../context/TradeContext';
 import { useAsync } from '../../hooks/useAsync';
 import { getOrderBook } from '../../api';
 import { makeId } from '../../utils';
+import { StyledScrollDiv } from '../styles';
 
 
 const Wrapper = styled('div')(() => ({
   display: 'flex',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  flexWrap: 'wrap'
 }))
 
 const OrderArea = styled('div')(() => ({
-  width: '50%',
   overflow: 'auto',
+  minWidth: 200
+}))
 
+const BidTableRow = styled(TableRow)((props) => ({
+  backgroundImage: `linear-gradient(to left, rgba(2, 199, 122, 0.25), rgba(2, 199, 122, 0.25) ${props.percent}%, rgba(0, 0, 0, 0) ${props.percent}%)`
+}))
+
+const AskTableRow = styled(TableRow)((props) => ({
+  backgroundImage: `linear-gradient(to right, rgba(255, 59, 105, 0.25), rgba(255, 59, 105, 0.25) ${props.percent}%, rgba(0, 0, 0, 0) ${props.percent}%)`
 }))
 
 export default function OrderBook() {
@@ -50,7 +59,22 @@ export default function OrderBook() {
   const asks = React.useMemo(() => {
     if (data) {
       const { asks } = data
-      if (asks) return asks?.reverse()
+      if (asks) {
+        let data = asks.reverse().map((item) => {
+          return {
+            total: item[0] * item[1],
+            price: item[0],
+            amount: item[1]
+          }
+        })
+        let items = []
+        let sum = 0
+        data.forEach(element => {
+          sum += element.total
+          items.push({ ...element, sum })
+        });
+        return items
+      }
     }
     return null
   }, [data])
@@ -58,14 +82,31 @@ export default function OrderBook() {
   const bids = React.useMemo(() => {
     if (data) {
       const { bids } = data
-      if (bids) return bids?.reverse()
+      if (bids) {
+        let bidData = bids.reverse().map((item) => {
+          return {
+            total: item[0] * item[1],
+            price: item[0],
+            amount: item[1]
+          }
+        })
+        let items = []
+        let sum = 0
+        bidData.forEach(element => {
+          sum += element.total
+          items.push({ ...element, sum })
+        });
+        return items
+      }
     }
     return null
   }, [data])
 
+  const bidVolume = bids ? bids[bids.length - 1]?.sum : 0
+  const askVolume = asks ? asks[asks.length - 1]?.sum : 0
 
   return (
-    <div style={{ maxHeight: '100%', overflow: 'auto' }}>
+    <StyledScrollDiv>
       <h2>OrderBook</h2>
       <Wrapper>
         <OrderArea>
@@ -80,17 +121,18 @@ export default function OrderBook() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {bids?.map((row) => (
-                  <TableRow
+                {bids?.map((row, index) => (
+                  <BidTableRow
                     key={makeId(5)}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    percent={bidVolume ? row.sum / bidVolume * 100 : 0}
                   >
                     <TableCell scope="row" style={{color: 'green' }}>
-                      {row[0]}
+                      {row.price}
                     </TableCell>
-                    <TableCell scope="row">{row[1]}</TableCell>
-                    <TableCell scope="row">{row[0] * row[1]}</TableCell>
-                  </TableRow>
+                    <TableCell scope="row">{row.amount}</TableCell>
+                    <TableCell scope="row">{row.total}</TableCell>
+                  </BidTableRow>
                 ))}
               </TableBody>
             </Table>
@@ -109,22 +151,23 @@ export default function OrderBook() {
               </TableHead>
               <TableBody>
                 {asks?.map((row) => (
-                  <TableRow
+                  <AskTableRow
                     key={makeId(5)}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    percent={askVolume ? row.sum / askVolume * 100 : 0}
                   >
                     <TableCell scope="row" style={{color: 'red' }}>
-                      {row[0]}
+                      {row.price}
                     </TableCell>
-                    <TableCell scope="row">{row[1]}</TableCell>
-                    <TableCell scope="row">{row[0] * row[1]}</TableCell>
-                  </TableRow>
+                    <TableCell scope="row">{row.amount}</TableCell>
+                    <TableCell scope="row">{row.total}</TableCell>
+                  </AskTableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
         </OrderArea>
       </Wrapper>
-    </div>
+    </StyledScrollDiv>
   );
 }

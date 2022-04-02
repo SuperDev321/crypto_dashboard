@@ -11,6 +11,7 @@ import TradeContext from '../../context/TradeContext';
 import { useAsync } from '../../hooks/useAsync';
 import { getOrderBook, getTrades } from '../../api';
 import { makeId, timeConverter } from '../../utils';
+import { StyledScrollDiv } from '../styles';
 
 
 const Wrapper = styled('div')(() => ({
@@ -46,7 +47,7 @@ export default function Trades() {
   }, [tradeSymbol])
 
   return (
-    <div style={{ maxHeight: '100%', overflow: 'auto' }}>
+    <StyledScrollDiv style={{ maxHeight: '100%', overflow: 'auto' }}>
       <h2>Trades</h2>
       <Wrapper>
         <TableContainer component={Paper}>
@@ -75,6 +76,6 @@ export default function Trades() {
           </Table>
         </TableContainer>
       </Wrapper>
-    </div>
+    </StyledScrollDiv>
   );
 }

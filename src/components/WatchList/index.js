@@ -12,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import { getPriceTickers } from "../../api";
 import SignColorText from "../SignColorText";
 import TradeContext from "../../context/TradeContext";
+import { StyledScrollDiv } from "../styles";
 
 const columns = [
   { id: 'name', label: 'Symbol', minWidth: 170 },
@@ -94,64 +95,62 @@ export default function StickyHeadTable() {
 
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+    <StyledScrollDiv style={{ width: '100%', height: '100%' }}>
       <h2>Watch List</h2>
       <SearchAsset addAsset={addAsset} />
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {watchList
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onClick={() => {
-                      setTradeSymbol(row)
-                    }}>
-                      <TableCell align='left'>
-                        {row.symbol}
-                      </TableCell>
-                      <TableCell align='left'>
-                        {row.base}
-                      </TableCell>
-                      <TableCell align='left'>
-                        {row.quote}
-                      </TableCell>
-                      <TableCell align='left'>
-                        {row.last}
-                      </TableCell>
-                      <TableCell align='left'>
-                        <SignColorText>{row.percentage}</SignColorText>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={watchList.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </div>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {watchList
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onClick={() => {
+                    setTradeSymbol(row)
+                  }}>
+                    <TableCell align='left'>
+                      {row.symbol}
+                    </TableCell>
+                    <TableCell align='left'>
+                      {row.base}
+                    </TableCell>
+                    <TableCell align='left'>
+                      {row.quote}
+                    </TableCell>
+                    <TableCell align='left'>
+                      {row.last}
+                    </TableCell>
+                    <TableCell align='left'>
+                      <SignColorText>{row.percentage}</SignColorText>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={watchList.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </StyledScrollDiv>
   );
 }

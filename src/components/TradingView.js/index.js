@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from "react"
 import TradeContext from "../../context/TradeContext"
 import TradingViewWidget, { Themes } from 'react-tradingview-widget';
+import { StyledScrollDiv } from "../styles";
 
 const TradingView = () => {
   const { tradeSymbol } = useContext(TradeContext)
@@ -12,7 +13,7 @@ const TradingView = () => {
   }, [tradeSymbol])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+    <StyledScrollDiv style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
       <h2>Trading Chart</h2>
       <div style={{ flexGrow: 1 }}>{ binanceSymbol ? (
         <TradingViewWidget
@@ -24,7 +25,7 @@ const TradingView = () => {
         />
       ) : null}
       </div>
-    </div>
+    </StyledScrollDiv>
   )
 }
 
