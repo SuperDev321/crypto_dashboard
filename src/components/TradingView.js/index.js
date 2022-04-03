@@ -18,7 +18,7 @@ const TradingView = () => {
       <div style={{ flexGrow: 1 }}>{ binanceSymbol ? (
         <TradingViewWidget
           symbol={binanceSymbol}
-          theme={Themes.Light}
+          theme={Themes.DARK}
           locale="fr"
           autosize
           // watchlist = {watchList}

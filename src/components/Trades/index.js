@@ -8,9 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TradeContext from '../../context/TradeContext';
-import { useAsync } from '../../hooks/useAsync';
-import { getOrderBook, getTrades } from '../../api';
-import { makeId, timeConverter } from '../../utils';
+import { getTrades } from '../../api';
+import { timeConverter } from '../../utils';
 import { StyledScrollDiv } from '../styles';
 
 
@@ -28,15 +27,15 @@ const StyledCell = styled(TableCell)((props) => ({
 
 
 export default function Trades() {
-  const { tradeSymbol, watchList } = React.useContext(TradeContext)
+  const { tradeSymbol } = React.useContext(TradeContext)
   const [data, setData] = React.useState()
 
   React.useEffect(() => {
     let timer = null
     if (tradeSymbol) {
-      getTrades(tradeSymbol.symbol).then((data) => setData(data.reverse()))
+      getTrades(tradeSymbol.symbol).then((data) => data && setData(data.reverse()))
       timer = setInterval(() => {
-        getTrades(tradeSymbol.symbol).then((data) => setData(data.reverse()))
+        getTrades(tradeSymbol.symbol).then((data) => data && setData(data.reverse()))
       }, 1000)
     }
     return () => {

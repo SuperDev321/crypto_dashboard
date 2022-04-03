@@ -8,10 +8,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TradeContext from '../../context/TradeContext';
-import { useAsync } from '../../hooks/useAsync';
+// import { useAsync } from '../../hooks/useAsync';
 import { getOrderBook } from '../../api';
-import { makeId } from '../../utils';
 import { StyledScrollDiv } from '../styles';
+import { AskTableRow, BidTableRow } from './Blink';
 
 
 const Wrapper = styled('div')(() => ({
@@ -25,28 +25,16 @@ const OrderArea = styled('div')(() => ({
   minWidth: 200
 }))
 
-const BidTableRow = styled(TableRow)((props) => ({
-  backgroundImage: `linear-gradient(to left, rgba(2, 199, 122, 0.25), rgba(2, 199, 122, 0.25) ${props.percent}%, rgba(0, 0, 0, 0) ${props.percent}%)`
-}))
-
-const AskTableRow = styled(TableRow)((props) => ({
-  backgroundImage: `linear-gradient(to right, rgba(255, 59, 105, 0.25), rgba(255, 59, 105, 0.25) ${props.percent}%, rgba(0, 0, 0, 0) ${props.percent}%)`
-}))
-
 export default function OrderBook() {
-  const { tradeSymbol, watchList } = React.useContext(TradeContext)
-  // const { data, run, loading } = useAsync({
-  //   data: null,
-  //   error: null
-  // })
+  const { tradeSymbol } = React.useContext(TradeContext)
   const [data, setData] = React.useState()
 
   React.useEffect(() => {
     let timer = null
     if (tradeSymbol) {
-      getOrderBook(tradeSymbol.symbol).then((data) => setData(data))
+      getOrderBook(tradeSymbol.symbol).then((data) => data && setData(data))
       timer = setInterval(() => {
-        getOrderBook(tradeSymbol.symbol).then((data) => setData(data))
+        getOrderBook(tradeSymbol.symbol).then((data) => data && setData(data))
       }, 1000)
     }
     return () => {
@@ -121,17 +109,15 @@ export default function OrderBook() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {bids?.map((row, index) => (
+                {bids?.map(({ price, amount, total, sum }, index) => (
                   <BidTableRow
-                    key={makeId(5)}
+                    key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    percent={bidVolume ? row.sum / bidVolume * 100 : 0}
+                    percent={bidVolume ? sum / bidVolume * 100 : 0}
+                    price={price}
+                    amount={amount}
+                    total={total}
                   >
-                    <TableCell scope="row" style={{color: 'green' }}>
-                      {row.price}
-                    </TableCell>
-                    <TableCell scope="row">{row.amount}</TableCell>
-                    <TableCell scope="row">{row.total}</TableCell>
                   </BidTableRow>
                 ))}
               </TableBody>
@@ -150,17 +136,15 @@ export default function OrderBook() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {asks?.map((row) => (
+                {asks?.map(({ price, amount, total, sum }, index) => (
                   <AskTableRow
-                    key={makeId(5)}
+                    key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    percent={askVolume ? row.sum / askVolume * 100 : 0}
+                    percent={askVolume ? sum / askVolume * 100 : 0}
+                    price={price}
+                    amount={amount}
+                    total={total}
                   >
-                    <TableCell scope="row" style={{color: 'red' }}>
-                      {row.price}
-                    </TableCell>
-                    <TableCell scope="row">{row.amount}</TableCell>
-                    <TableCell scope="row">{row.total}</TableCell>
                   </AskTableRow>
                 ))}
               </TableBody>

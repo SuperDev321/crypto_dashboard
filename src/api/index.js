@@ -1,6 +1,6 @@
-import axios from 'axios'
+// import axios from 'axios'
 import * as ccxt from 'ccxt'
-import config from '../config'
+// import config from '../config'
 
 const exchange = new ccxt.binance ({
   'enableRateLimit': true

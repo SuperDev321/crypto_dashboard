@@ -1,14 +1,13 @@
 import WatchList from "../components/WatchList"
-import GridLayout from "react-grid-layout";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TradeContext from "../context/TradeContext";
 import TradingView from "../components/TradingView.js";
 import OrderBook from "../components/OrderBook";
 
 import { Responsive, WidthProvider } from "react-grid-layout";
 import Trades from "../components/Trades";
-import { styled } from "@mui/material";
-import { borderRadius } from "@mui/system";
+import { createTheme, Paper, styled } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -25,31 +24,44 @@ const layouts = { lg: [
 ]
 }
 
-const StyledDiv = styled('div')(() => ({
-  background: 'white',
+const StyledDiv = styled(Paper)(() => ({
   borderRadius: 5,
+  color: 'white'
 }))
 
 
 const Dashboard = () => {
   const [tradeSymbol, setTradeSymbol] = useState({ id: 'ETHBTC', symbol: 'ETH/BTC' })
   const [watchList, setWatchList] = useState([])
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: 'dark',
+        },
+      }),
+    [],
+  );
+
   return (
-    <TradeContext.Provider value={{ tradeSymbol, setTradeSymbol, watchList, setWatchList }}>
-      <ResponsiveGridLayout
-        className="layout"
-        layouts={layouts}
-        rowHeight={30}
-        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-        style={{background: '#c1c1c15c'}}
-      >
-        <StyledDiv key="a"><WatchList /></StyledDiv>
-        <StyledDiv key="b"><TradingView /></StyledDiv>
-        <StyledDiv key="c"><OrderBook /></StyledDiv>
-        <StyledDiv key="d"><Trades /></StyledDiv>
-      </ResponsiveGridLayout>
-    </TradeContext.Provider>
+    <ThemeProvider theme={theme}>
+      <TradeContext.Provider value={{ tradeSymbol, setTradeSymbol, watchList, setWatchList }}>
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={layouts}
+          rowHeight={30}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          style={{background: 'rgb(7 6 6 / 96%)'}}
+        >
+          <StyledDiv key="a"><WatchList /></StyledDiv>
+          <StyledDiv key="b"><TradingView /></StyledDiv>
+          <StyledDiv key="c"><OrderBook /></StyledDiv>
+          <StyledDiv key="d"><Trades /></StyledDiv>
+        </ResponsiveGridLayout>
+      </TradeContext.Provider>
+    </ThemeProvider>
   )
 }
 

@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useMemo, useReducer, useState } from "react"
+import React, { useContext, useEffect, useReducer } from "react"
 import SearchAsset from "./SearchAsset"
-import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -99,7 +98,7 @@ export default function StickyHeadTable() {
       <h2>Watch List</h2>
       <SearchAsset addAsset={addAsset} />
       <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+        <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
