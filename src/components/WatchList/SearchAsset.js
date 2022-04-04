@@ -30,6 +30,8 @@ export default function SearchAsset({ addAsset }) {
     addAsset(item)
   }
 
+  console.log(data)
+
   const loading = open && (status !== 'resolved' || dataLoading)
 
   return (
@@ -53,6 +55,7 @@ export default function SearchAsset({ addAsset }) {
       renderInput={(params) => (
         <TextField
           {...params}
+          size="small"
           label="Search Assets"
           InputProps={{
             ...params.InputProps,

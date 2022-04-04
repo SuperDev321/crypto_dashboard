@@ -18,7 +18,8 @@ const columns = [
   { id: 'base', label: 'Base', minWidth: 100 },
   { id: 'quote', label: 'Quote', minWidth: 100 },
   { id: 'price', label: 'Price', minWidth: 100 },
-  { id: 'change', label: 'Change', minWidth: 100 }
+  { id: 'change', label: 'Change', minWidth: 100 },
+  { id: 'volume', label: 'Volume', minWidth: 100 }
 ];
 
 const arrayReducer = (state, action) => {
@@ -92,10 +93,11 @@ export default function StickyHeadTable() {
     }
   }, [assets])
 
+  console.log(watchList)
+
 
   return (
     <StyledScrollDiv style={{ width: '100%', height: '100%' }}>
-      <h2>Watch List</h2>
       <SearchAsset addAsset={addAsset} />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table aria-label="sticky table">
@@ -113,11 +115,9 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {watchList
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
+            {watchList.map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onClick={() => {
+                  <TableRow hover tabIndex={-1} key={row.code} onClick={() => {
                     setTradeSymbol(row)
                   }}>
                     <TableCell align='left'>
@@ -135,13 +135,16 @@ export default function StickyHeadTable() {
                     <TableCell align='left'>
                       <SignColorText>{row.percentage}</SignColorText>
                     </TableCell>
+                    <TableCell align='left'>
+                      {row?.info?.volume}
+                    </TableCell>
                   </TableRow>
                 );
               })}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
         count={watchList.length}
@@ -149,7 +152,7 @@ export default function StickyHeadTable() {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      /> */}
     </StyledScrollDiv>
   );
 }

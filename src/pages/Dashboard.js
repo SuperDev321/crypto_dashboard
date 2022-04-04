@@ -12,10 +12,10 @@ import { ThemeProvider } from "@mui/material/styles";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const layouts = { lg: [
-  { i: "a", x: 0, y: 0, w: 6, h: 13, minH: 3 },
-  { i: "b", x: 6, y: 0, w: 6, h: 13, minH: 3 },
-  { i: "c", x: 0, y: 13, w: 6, h: 13, minH: 3 },
-  { i: "d", x: 6, y: 13, w: 6, h: 13, minH: 3 }
+  { i: "a", x: 0, y: 0, w: 15, h: 18, minH: 3 },
+  { i: "b", x: 15, y: 0, w: 5, h: 26, minH: 2 },
+  { i: "d", x: 20, y: 13, w: 4, h: 26, minH: 2 },
+  { i: "c", x: 0, y: 18, w: 15, h: 8, minH: 2 },
 ], md : [
   { i: "a", x: 1, y: 0, w: 8, h: 10, minH: 3 },
   { i: "b", x: 1, y: 10, w: 8, h: 10, minH: 3 },
@@ -26,7 +26,8 @@ const layouts = { lg: [
 
 const StyledDiv = styled(Paper)(() => ({
   borderRadius: 5,
-  color: 'white'
+  color: 'white',
+  background: '#111722'
 }))
 
 
@@ -40,9 +41,17 @@ const Dashboard = () => {
         palette: {
           mode: 'dark',
         },
+        typography: {
+          fontFamily: 'Arial, Helvetica, sans-serif !important',
+          fontSize: 10,
+        },
       }),
     [],
   );
+
+  const handleChangeLayout = (layout, layouts) => {
+    console.log(layouts)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -52,12 +61,13 @@ const Dashboard = () => {
           layouts={layouts}
           rowHeight={30}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          cols={{ lg: 24, md: 10, sm: 6, xs: 4, xxs: 2 }}
           style={{background: 'rgb(7 6 6 / 96%)'}}
+          onLayoutChange={handleChangeLayout}
         >
-          <StyledDiv key="a"><WatchList /></StyledDiv>
-          <StyledDiv key="b"><TradingView /></StyledDiv>
-          <StyledDiv key="c"><OrderBook /></StyledDiv>
+          <StyledDiv key="a"><TradingView /></StyledDiv>
+          <StyledDiv key="c"><WatchList /></StyledDiv>
+          <StyledDiv key="b"><OrderBook /></StyledDiv>
           <StyledDiv key="d"><Trades /></StyledDiv>
         </ResponsiveGridLayout>
       </TradeContext.Provider>

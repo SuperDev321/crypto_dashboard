@@ -11,6 +11,7 @@ import TradeContext from '../../context/TradeContext';
 import { getTrades } from '../../api';
 import { timeConverter } from '../../utils';
 import { StyledScrollDiv } from '../styles';
+import Header from './Header';
 
 
 const Wrapper = styled('div')(() => ({
@@ -47,7 +48,7 @@ export default function Trades() {
 
   return (
     <StyledScrollDiv style={{ maxHeight: '100%', overflow: 'auto' }}>
-      <h2>Trades</h2>
+      <Header />
       <Wrapper>
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a dense table">
