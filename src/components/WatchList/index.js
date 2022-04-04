@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useReducer } from "react"
+import React, { useContext, useEffect, useReducer, useState } from "react"
 import SearchAsset from "./SearchAsset"
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-
-import { getPriceTickers } from "../../api";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getPriceTickers, getWatchList, removeWatchList, saveWatchList } from "../../api";
 import SignColorText from "../SignColorText";
 import TradeContext from "../../context/TradeContext";
 import { StyledScrollDiv } from "../styles";
+import AuthContext from "../../context/AuthContext";
 
 const columns = [
   { id: 'name', label: 'Symbol', minWidth: 170 },
@@ -19,18 +19,21 @@ const columns = [
   { id: 'quote', label: 'Quote', minWidth: 100 },
   { id: 'price', label: 'Price', minWidth: 100 },
   { id: 'change', label: 'Change', minWidth: 100 },
-  { id: 'volume', label: 'Volume', minWidth: 100 }
+  { id: 'volume', label: 'Volume', minWidth: 100 },
+  { id: 'action', label: 'Action', minWidth: 100 }
 ];
 
 const arrayReducer = (state, action) => {
   switch(action.type) {
     case 'add':
       return [...state, action.data]
+    case 'set':
+      return action.data
     case 'batchUpdate':
       const _state = state.map((item) => {
         const updateData = action?.data[item.symbol]
         if (updateData) {
-          return { ...item, ...updateData }
+          return { ...item, ...updateData}
         } else return item
       })
       return _state
@@ -44,33 +47,51 @@ const arrayReducer = (state, action) => {
 
 export default function StickyHeadTable() {
   const [watchList, watchListDispatch] = useReducer(arrayReducer, [])
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const { setTradeSymbol, watchList: watchListToTrade, setWatchList: setWatchListToTrade } = useContext(TradeContext)
+  const [assets, setAssests] = useState([])
+  const { tradeSymbol, setTradeSymbol, watchList: watchListToTrade, setWatchList: setWatchListToTrade } = useContext(TradeContext)
+  const { userId } = useContext(AuthContext)
 
   const addAsset = (asset) => {
-    setWatchListToTrade([...watchListToTrade, 'BINANCE:' + asset.id])
-    if (!watchList?.some(({ symbol }) => symbol === asset.symbol)) watchListDispatch({ type: 'add', data: asset })
+    const { id, symbol, base, quote } = asset
+    if (!watchList?.some(({ symbol }) => symbol === asset.symbol)) {
+      saveWatchList(userId, [...assets, { id, symbol, base, quote }])
+        .then(() => {
+          setAssests([...assets, asset])
+        })
+    }
   }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const removeAsset = (id) => {
+    if (watchList?.some((item) => item.id === id)) {
+      removeWatchList(userId, id)
+        .then(() => {
+          setAssests(assets.filter((asset) => asset.id !== id))
+        })
+    }
+  }
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  useEffect(() => {
+    if (assets && !tradeSymbol) {
+      if (assets && assets.length) {
+        setTradeSymbol(assets[0])
+      }
+    }
+  }, [watchList, tradeSymbol, setTradeSymbol, assets])
 
-  const assets = React.useMemo(() => {
-    return watchList.map(({ symbol }) => symbol)
-  }, [watchList])
+  useEffect(() => {
+    getWatchList(userId)
+      .then((data) => {
+        if (data && data.watchList) {
+          setAssests(data.watchList)
+        }
+      })
+  }, [userId])
 
   useEffect(() => {
     let timer = null
     if (assets.length) {
-      
-      getPriceTickers(assets)
+      watchListDispatch({ type: 'set', data: assets })
+      getPriceTickers(assets.map((({ symbol }) => symbol)))
         .then((data) => {
           if (data) {
             watchListDispatch({ type: 'batchUpdate', data })
@@ -86,15 +107,14 @@ export default function StickyHeadTable() {
         })
           .catch(() => {})
       }, 3000)
+    } else {
+      watchListDispatch({ type: 'set', data: [] })
     }
 
     return () => {
       if (timer) clearInterval(timer)
     }
   }, [assets])
-
-  console.log(watchList)
-
 
   return (
     <StyledScrollDiv style={{ width: '100%', height: '100%' }}>
@@ -115,7 +135,7 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {watchList.map((row) => {
+            {watchList && watchList.map((row) => {
                 return (
                   <TableRow hover tabIndex={-1} key={row.code} onClick={() => {
                     setTradeSymbol(row)
@@ -137,6 +157,9 @@ export default function StickyHeadTable() {
                     </TableCell>
                     <TableCell align='left'>
                       {row?.info?.volume}
+                    </TableCell>
+                    <TableCell align='left'>
+                      <DeleteIcon onClick={() => removeAsset(row.id)}></DeleteIcon>
                     </TableCell>
                   </TableRow>
                 );

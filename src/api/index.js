@@ -1,17 +1,116 @@
-// import axios from 'axios'
+import axios from 'axios'
 import * as ccxt from 'ccxt'
-// import config from '../config'
+import config from '../config'
 
 const exchange = new ccxt.binance ({
   'enableRateLimit': true,
   'precisionMode': ccxt.DECIMAL_PLACES
 })
 
-console.log(exchange)
-
 const assets = [
   'btc', 'eth', 'dot', 'luna', 'near', 'sol', 'avax', 'ftm', 'matic', 'atom', 'oasis'
 ]
+
+const getWatchList = (userId) => {
+  return axios.get(`${config.backend_url}/api/watchList/${userId}`)
+    .then((response) => {
+      if (response && response.data) {
+        const { result, data } = response.data
+        if (result && data) {
+          return data
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+    .catch((err) => {
+      return null
+    })
+}
+
+const saveWatchList = (userId, watchList) => {
+  return axios.post(`${config.backend_url}/api/watchList/${userId}`, {
+    watchList
+  })
+    .then((response) => {
+      if (response && response.data) {
+        const { result, data } = response.data
+        if (result && data) {
+          return data
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+    .catch((err) => {
+      return null
+    })
+}
+
+const removeWatchList = (userId, id) => {
+  return axios.post(`${config.backend_url}/api/watchList/${userId}/remove`, {
+    id
+  })
+    .then((response) => {
+      if (response && response.data) {
+        const { result, data } = response.data
+        if (result && data) {
+          return data
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+    .catch((err) => {
+      return null
+    })
+}
+
+const getViewConfig = (userId) => {
+  return axios.get(`${config.backend_url}/api/viewConfig/${userId}`)
+    .then((response) => {
+      if (response && response.data) {
+        const { result, data } = response.data
+        if (result && data) {
+          return data
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+    .catch((err) => {
+      return null
+    })
+}
+
+const saveViewConfig = (userId, viewConfig) => {
+  return axios.post(`${config.backend_url}/api/viewConfig/${userId}`, {
+    viewConfig
+  })
+    .then((response) => {
+      if (response && response.data) {
+        const { result, data } = response.data
+        if (result && data) {
+          return data
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
+    })
+    .catch((err) => {
+      return null
+    })
+}
 
 const searchAssets = async (searchStr) => {
   try {
@@ -107,8 +206,7 @@ const getOrderBook = async (symbol, precision) => {
 const getTrades = async (symbol, since = 1, limit = 30) => {
   try {
     const sinceTime = exchange.milliseconds () - since * 86400000
-    const trades = await exchange.fetchTrades(symbol, sinceTime, limit)
-    console.log(trades)
+    const trades = await exchange.fetchTrades(symbol, sinceTime, 100)
     return trades
   } catch (err) {
     return null
@@ -117,6 +215,11 @@ const getTrades = async (symbol, since = 1, limit = 30) => {
 
 
 export {
+  getViewConfig,
+  saveViewConfig,
+  getWatchList,
+  saveWatchList,
+  removeWatchList,
   searchAssets,
   getPriceTickers,
   getOrderBook,

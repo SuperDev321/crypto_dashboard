@@ -30,8 +30,6 @@ export default function SearchAsset({ addAsset }) {
     addAsset(item)
   }
 
-  console.log(data)
-
   const loading = open && (status !== 'resolved' || dataLoading)
 
   return (

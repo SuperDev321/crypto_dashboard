@@ -1,5 +1,5 @@
 import WatchList from "../components/WatchList"
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TradeContext from "../context/TradeContext";
 import TradingView from "../components/TradingView.js";
 import OrderBook from "../components/OrderBook";
@@ -8,6 +8,9 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import Trades from "../components/Trades";
 import { createTheme, Paper, styled } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
+import { getViewConfig, saveViewConfig } from "../api";
+import useAuth from "../hooks/useAuth";
+import AuthContext from "../context/AuthContext";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -33,7 +36,9 @@ const StyledDiv = styled(Paper)(() => ({
 
 const Dashboard = () => {
   const [tradeSymbol, setTradeSymbol] = useState({ id: 'ETHBTC', symbol: 'ETH/BTC' })
+  const { userId } = useAuth()
   const [watchList, setWatchList] = useState([])
+  const [viewConfig, setViewConfig] = useState()
 
   const theme = useMemo(
     () =>
@@ -49,28 +54,46 @@ const Dashboard = () => {
     [],
   );
 
-  const handleChangeLayout = (layout, layouts) => {
-    console.log(layouts)
+  const handleChangeLayout = (layout, _layouts) => {
+    saveViewConfig(userId, _layouts)
   }
+
+  useEffect(() => {
+    if (userId) {
+      getViewConfig(userId).then((data) => {
+        if (data && data.viewConfig) {
+          setViewConfig(data.viewConfig)
+        } else {
+          setViewConfig(layouts)
+        }
+      })
+        .catch(() => {
+          setViewConfig(layouts)
+        })
+    }
+  }, [userId])
 
   return (
     <ThemeProvider theme={theme}>
-      <TradeContext.Provider value={{ tradeSymbol, setTradeSymbol, watchList, setWatchList }}>
-        <ResponsiveGridLayout
-          className="layout"
-          layouts={layouts}
-          rowHeight={30}
-          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-          cols={{ lg: 24, md: 10, sm: 6, xs: 4, xxs: 2 }}
-          style={{background: 'rgb(7 6 6 / 96%)'}}
-          onLayoutChange={handleChangeLayout}
-        >
-          <StyledDiv key="a"><TradingView /></StyledDiv>
-          <StyledDiv key="c"><WatchList /></StyledDiv>
-          <StyledDiv key="b"><OrderBook /></StyledDiv>
-          <StyledDiv key="d"><Trades /></StyledDiv>
-        </ResponsiveGridLayout>
-      </TradeContext.Provider>
+      <AuthContext.Provider value={{ userId }}>
+        <TradeContext.Provider value={{ tradeSymbol, setTradeSymbol, watchList, setWatchList }}>
+          {viewConfig && <ResponsiveGridLayout
+              className="layout"
+              layouts={viewConfig}
+              rowHeight={30}
+              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+              cols={{ lg: 24, md: 10, sm: 6, xs: 4, xxs: 2 }}
+              style={{background: 'rgb(7 6 6 / 96%)'}}
+              onLayoutChange={handleChangeLayout}
+            >
+              <StyledDiv key="a"><TradingView /></StyledDiv>
+              <StyledDiv key="c"><WatchList /></StyledDiv>
+              <StyledDiv key="b"><OrderBook /></StyledDiv>
+              <StyledDiv key="d"><Trades /></StyledDiv>
+            </ResponsiveGridLayout>
+          }
+        </TradeContext.Provider>
+      </AuthContext.Provider>
     </ThemeProvider>
   )
 }
