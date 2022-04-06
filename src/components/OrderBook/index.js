@@ -42,7 +42,6 @@ export default function OrderBook() {
   const [data, setData] = React.useState()
   const [sortByTotal, setSortByTotal] = React.useState(true)
   const [precision, setPrecision] = React.useState(5)
-  const [maxVolume, setMaxVolume] = React.useState(100)
 
   const addPrecision = React.useCallback(() => {
     setPrecision(precision > 8 ? 10 : precision + 1)

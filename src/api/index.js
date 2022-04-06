@@ -1,15 +1,15 @@
 import axios from 'axios'
-import * as ccxt from 'ccxt'
+// import * as ccxt from 'ccxt'
 import config from '../config'
 
-const exchange = new ccxt.binance ({
-  'enableRateLimit': true,
-  'precisionMode': ccxt.DECIMAL_PLACES
-})
+// const exchange = new ccxt.binance ({
+//   'enableRateLimit': true,
+//   'precisionMode': ccxt.DECIMAL_PLACES
+// })
 
-const assets = [
-  'btc', 'eth', 'dot', 'luna', 'near', 'sol', 'avax', 'ftm', 'matic', 'atom', 'oasis'
-]
+// const assets = [
+//   'btc', 'eth', 'dot', 'luna', 'near', 'sol', 'avax', 'ftm', 'matic', 'atom', 'oasis'
+// ]
 
 const getWatchList = (userId) => {
   return axios.get(`${config.backend_url}/api/watchList/${userId}`)
