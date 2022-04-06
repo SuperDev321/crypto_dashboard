@@ -6,7 +6,7 @@ const BlueTableRow = styled(TableRow)((props) => ({
 }))
 
 const RedTableRow = styled(TableRow)((props) => ({
-  backgroundImage: `linear-gradient(to left, rgba(255, 59, 105, 0.25), rgba(255, 59, 105, 0.25) ${props.percent}%, rgba(255, 59, 105, ${props.state? '0.05' : '0'}) ${props.percent}%)`
+  backgroundImage: `linear-gradient(to left, rgba(247, 57, 105, 0.25), rgba(247, 57, 105, 0.25) ${props.percent}%, rgba(247, 57, 105, ${props.state? '0.05' : '0'}) ${props.percent}%)`
 }))
 
 const BidTableRow = ({ percent, price, amount, total }) => {
@@ -21,7 +21,7 @@ const BidTableRow = ({ percent, price, amount, total }) => {
       <TableCell scope="row">{total}</TableCell>
       <TableCell scope="row">{amount}</TableCell>
       
-      <TableCell scope="row" style={{color: 'green' }}>
+      <TableCell scope="row" style={{color: '#02c77a' }}>
         {price}
       </TableCell>
     </BlueTableRow>
@@ -56,7 +56,7 @@ const AskTableRow = ({ percent, price, amount, total }) => {
     >
       <TableCell scope="row">{total}</TableCell>
       <TableCell scope="row">{amount}</TableCell>
-      <TableCell scope="row" style={{color: 'red' }}>
+      <TableCell scope="row" style={{color: '#f73969' }}>
         {price}
       </TableCell>
       

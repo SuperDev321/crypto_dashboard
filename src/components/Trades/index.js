@@ -23,7 +23,7 @@ const Wrapper = styled('div')(() => ({
 const StyledCell = styled(TableCell)((props) => ({
   width: '50%',
   overflow: 'auto',
-  color: props.sell ? 'red' : 'green'
+  color: props.sell ? '#f73969' : '#02c77a'
 }))
 
 
