@@ -48,7 +48,7 @@ const arrayReducer = (state, action) => {
 export default function StickyHeadTable() {
   const [watchList, watchListDispatch] = useReducer(arrayReducer, [])
   const [assets, setAssests] = useState([])
-  const { tradeSymbol, setTradeSymbol, watchList: watchListToTrade, setWatchList: setWatchListToTrade } = useContext(TradeContext)
+  const { tradeSymbol, setTradeSymbol } = useContext(TradeContext)
   const { userId } = useContext(AuthContext)
 
   const addAsset = (asset) => {
@@ -113,11 +113,12 @@ export default function StickyHeadTable() {
 
     return () => {
       if (timer) clearInterval(timer)
+      timer = null
     }
   }, [assets])
 
   return (
-    <StyledScrollDiv style={{ width: '100%', height: '100%' }}>
+    <StyledScrollDiv className="handle" style={{ width: '100%', height: '100%' }}>
       <SearchAsset addAsset={addAsset} />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table aria-label="sticky table">
@@ -159,7 +160,7 @@ export default function StickyHeadTable() {
                       {row?.info?.volume}
                     </TableCell>
                     <TableCell align='left'>
-                      <DeleteIcon onClick={() => removeAsset(row.id)}></DeleteIcon>
+                      <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => removeAsset(row.id)}></DeleteIcon>
                     </TableCell>
                   </TableRow>
                 );

@@ -1,8 +1,8 @@
 import SortIcon from '@mui/icons-material/Sort';
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+// import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Popover from '@mui/material/Popover';
-import { Box, Slider, styled } from '@mui/material';
+import { Box, Slider } from '@mui/material';
 import { useState } from 'react';
 
 const marks = [
@@ -44,13 +44,12 @@ function valueLabelFormat(value) {
   const mark = marks.find((mark) => mark.value === value);
   return mark?.label
 }
-const Header = ({}) => {
+const Header = ({ range, setRange }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [value, setValue] = useState([0, 70]);
 
   const handleChangeSlider = (event, newValue) => {
     event.preventDefault()
-    setValue(newValue);
+    setRange(newValue);
   };
 
   const handleClick = (event) => {
@@ -84,7 +83,7 @@ const Header = ({}) => {
             <span>Filter by volume</span>
             <Slider
               getAriaLabel={() => 'Temperature range'}
-              value={value}
+              value={range}
               step={null}
               marks={marks}
               onChange={handleChangeSlider}

@@ -15,14 +15,26 @@ import { AskTableRow, BidTableRow } from './Blink';
 import Header from './Header';
 
 const Wrapper = styled('div')(() => ({
-  display: 'flex',
-  justifyContent: 'center',
-  flexWrap: 'wrap'
+  height: 'calc(100% - 30px)'
+  // flexWrap: 'wrap'
 }))
 
 const OrderArea = styled('div')(() => ({
+  display: 'flex',
   overflow: 'auto',
-  minWidth: 200
+  minWidth: 200,
+  width: '100%',
+  maxHeight: '50%',
+  '&::-webkit-scrollbar': {
+    width: '0.2em'
+  },
+  '&::-webkit-scrollbar-track': {
+    '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: 'rgba(0,0,0,.1)',
+    outline: 'none'
+  },
 }))
 
 export default function OrderBook() {
@@ -30,6 +42,7 @@ export default function OrderBook() {
   const [data, setData] = React.useState()
   const [sortByTotal, setSortByTotal] = React.useState(true)
   const [precision, setPrecision] = React.useState(5)
+  const [maxVolume, setMaxVolume] = React.useState(100)
 
   const addPrecision = React.useCallback(() => {
     setPrecision(precision > 8 ? 10 : precision + 1)
@@ -51,16 +64,17 @@ export default function OrderBook() {
           amount: precision,
           price: precision
         }).then((data) => data && setData(data))
-      }, 1000)
+      }, 3000)
     }
     return () => {
       if (timer) {
         clearInterval(timer)
+        timer = null
       }
     }
   }, [tradeSymbol, precision])
 
-  const asks = React.useMemo(() => {
+  const [asks, askMaxVolume] = React.useMemo(() => {
     if (data) {
       const { asks } = data
       if (asks) {
@@ -73,22 +87,25 @@ export default function OrderBook() {
         })
         let items = []
         let sum = 0
+        let max = 0
         data.forEach(element => {
           sum += element.amount
           items.push({ ...element, total: sum })
+          if (element.totalPrice > max) max = element.totalPrice
         });
+        
         if (sortByTotal) {
           items.sort(function(a, b) {
             return b.totalPrice - a.totalPrice
           })
         }
-        return items
+        return [items, max]
       }
     }
-    return null
+    return [null, 0]
   }, [data, sortByTotal])
 
-  const bids = React.useMemo(() => {
+  const [bids, bidMaxVolume] = React.useMemo(() => {
     if (data) {
       const { bids } = data
       if (bids) {
@@ -101,24 +118,26 @@ export default function OrderBook() {
         })
         let items = []
         let sum = 0
+        let max = 0
         bidData.forEach(element => {
           sum += element.amount
           items.push({ ...element, total: sum })
+          if (element.totalPrice > max) max = element.totalPrice
         });
         if (sortByTotal) {
           items.sort(function(a, b) {
             return b.totalPrice - a.totalPrice
           })
         }
-        return items
+        return [items, max]
       }
     }
-    return null
+    return [null, 0]
   }, [data, sortByTotal])
 
 
   return (
-    <StyledScrollDiv>
+    <StyledScrollDiv className="handle">
       <Header
         setSortByTotal={setSortByTotal}
         sortByTotal={sortByTotal}
@@ -128,7 +147,7 @@ export default function OrderBook() {
       />
       <Wrapper>
         <OrderArea>
-          <TableContainer component={Paper}>
+          <TableContainer style={{ height: 'max-content'}} component={Paper}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
@@ -142,7 +161,7 @@ export default function OrderBook() {
                   <BidTableRow
                     key={price + '-' + amount}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    percent={totalPrice * 50}
+                    percent={totalPrice / bidMaxVolume * 100}
                     price={price}
                     amount={amount}
                     total={total}
@@ -154,13 +173,13 @@ export default function OrderBook() {
           </TableContainer>
         </OrderArea>
         <OrderArea>
-          <TableContainer component={Paper}>
+          <TableContainer  style={{ height: 'max-content'}} component={Paper}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Amount</TableCell>
                   <TableCell>Total</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Price</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -168,7 +187,7 @@ export default function OrderBook() {
                   <AskTableRow
                     key={price + '-' + amount}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    percent={totalPrice*50}
+                    percent={totalPrice / askMaxVolume * 100}
                     price={price}
                     amount={amount}
                     total={total}

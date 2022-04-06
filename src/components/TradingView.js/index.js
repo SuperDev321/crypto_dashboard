@@ -13,7 +13,7 @@ const TradingView = () => {
   }, [tradeSymbol])
 
   return (
-    <StyledScrollDiv style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+    <StyledScrollDiv className="handle" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
       <h2>Trading Chart</h2>
       <div style={{ flexGrow: 1 }}>{ binanceSymbol ? (
         <TradingViewWidget

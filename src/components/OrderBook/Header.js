@@ -3,7 +3,7 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { styled } from '@mui/material';
+// import { styled } from '@mui/material';
 
 const Header = ({ sortByTotal, setSortByTotal, precision, addPrecision, subPrecision }) => {
   return (

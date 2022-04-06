@@ -12,7 +12,10 @@ const StyledScrollDiv = styled('div')(() => ({
     outline: 'none'
   },
   maxHeight: '100%',
-  overflow: 'auto'
+  height: '100%',
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column'
 }))
 
 export {

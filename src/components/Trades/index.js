@@ -16,7 +16,8 @@ import Header from './Header';
 
 const Wrapper = styled('div')(() => ({
   display: 'flex',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  flexGrow: 1
 }))
 
 const StyledCell = styled(TableCell)((props) => ({
@@ -30,26 +31,54 @@ const StyledCell = styled(TableCell)((props) => ({
 export default function Trades() {
   const { tradeSymbol } = React.useContext(TradeContext)
   const [data, setData] = React.useState()
+  const [range, setRange] = React.useState([0, 70])
 
   React.useEffect(() => {
     let timer = null
     if (tradeSymbol) {
-      getTrades(tradeSymbol.symbol).then((data) => data && setData(data.reverse()))
+      const [start, end] = range
+      const rangeDay = (end - start) / 10
+      const startVolume = start === 70 ? undefined : start ? Math.pow(10, start / 10) : 0
+      const endVolume = end === 70 ? undefined : end ? Math.pow(10, end / 10) : 0
+      getTrades(tradeSymbol.symbol, 7 - rangeDay > 0 ? 7 - rangeDay : 1, (7 - rangeDay) > 0 ? (7 - rangeDay) * 100 : 100).then((data) => {
+        if (data) {
+          let trades = [...data]
+          if (startVolume) {
+            trades = trades.filter(({ price, amount }) => price * amount >= startVolume)
+          }
+          if (endVolume) {
+            trades = trades.filter(({ price, amount }) => price * amount <= endVolume)
+          }
+          setData(trades)
+        }
+      })
       timer = setInterval(() => {
-        getTrades(tradeSymbol.symbol).then((data) => data && setData(data.reverse()))
-      }, 1000)
+        getTrades(tradeSymbol.symbol, 7 - rangeDay > 0 ? 7 - rangeDay : 1, (7 - rangeDay) > 0 ? (7 - rangeDay) * 100 : 100).then((data) => {
+          if (data) {
+            let trades = [...data]
+            if (startVolume) {
+              trades = trades.filter(({ price, amount }) => price * amount > startVolume)
+            }
+            if (endVolume) {
+              trades = trades.filter(({ price, amount }) => price * amount < endVolume)
+            }
+            setData(trades)
+          }
+        })
+      }, 3000)
     }
     return () => {
       if (timer) {
         clearInterval(timer)
+        timer = null
       }
     }
-  }, [tradeSymbol])
+  }, [tradeSymbol, range])
 
   return (
     <StyledScrollDiv style={{ maxHeight: '100%', overflow: 'auto' }}>
-      <Header />
-      <Wrapper>
+      <Header range={range} setRange={setRange} />
+      <Wrapper className="handle">
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a dense table">
             <TableHead>

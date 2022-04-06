@@ -1,7 +1,10 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
+// import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 import { useAsync } from '../../hooks/useAsync';
 import { searchAssets } from '../../api';
 
@@ -54,7 +57,7 @@ export default function SearchAsset({ addAsset }) {
         <TextField
           {...params}
           size="small"
-          label="Search Assets"
+          variant="standard"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -63,6 +66,11 @@ export default function SearchAsset({ addAsset }) {
                 {params.InputProps.endAdornment}
               </React.Fragment>
             ),
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+          ),
           }}
         />
       )}

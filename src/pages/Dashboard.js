@@ -35,7 +35,7 @@ const StyledDiv = styled(Paper)(() => ({
 
 
 const Dashboard = () => {
-  const [tradeSymbol, setTradeSymbol] = useState({ id: 'ETHBTC', symbol: 'ETH/BTC' })
+  const [tradeSymbol, setTradeSymbol] = useState({ id: 'ETHUSDT', symbol: 'ETH/USDT' })
   const { userId } = useAuth()
   const [watchList, setWatchList] = useState([])
   const [viewConfig, setViewConfig] = useState()
@@ -85,11 +85,12 @@ const Dashboard = () => {
               cols={{ lg: 24, md: 10, sm: 6, xs: 4, xxs: 2 }}
               style={{background: 'rgb(7 6 6 / 96%)'}}
               onLayoutChange={handleChangeLayout}
+              draggableHandle=".handle"
             >
-              <StyledDiv key="a"><TradingView /></StyledDiv>
-              <StyledDiv key="c"><WatchList /></StyledDiv>
-              <StyledDiv key="b"><OrderBook /></StyledDiv>
-              <StyledDiv key="d"><Trades /></StyledDiv>
+              <StyledDiv key="a" isDraggable={true}><TradingView /></StyledDiv>
+              <StyledDiv key="c" isDraggable={true}><WatchList /></StyledDiv>
+              <StyledDiv key="b" isDraggable={true}><OrderBook /></StyledDiv>
+              <StyledDiv key="d" isDraggable={false}><Trades /></StyledDiv>
             </ResponsiveGridLayout>
           }
         </TradeContext.Provider>
