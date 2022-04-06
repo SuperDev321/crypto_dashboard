@@ -26,8 +26,6 @@ const StyledCell = styled(TableCell)((props) => ({
   color: props.sell ? '#f73969' : '#02c77a'
 }))
 
-
-
 export default function Trades() {
   const { tradeSymbol } = React.useContext(TradeContext)
   const [data, setData] = React.useState()
@@ -76,29 +74,29 @@ export default function Trades() {
   }, [tradeSymbol, range])
 
   return (
-    <StyledScrollDiv style={{ maxHeight: '100%', overflow: 'auto' }}>
+    <StyledScrollDiv style={{ overflow: 'auto' }}>
       <Header range={range} setRange={setRange} />
       <Wrapper className="handle">
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{ backgroundColor: '#111722' }}>
           <Table size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell component="th">Price</TableCell>
-                <TableCell component="th">Amount</TableCell>
-                <TableCell component="th">Time</TableCell>
+                <TableCell component="th" style={{ fontSize: "14px", color: "lightgray" }}>TIME</TableCell>
+                <TableCell component="th" style={{ fontSize: "14px", color: "lightgray" }}>PRICE</TableCell>
+                <TableCell component="th" style={{ fontSize: "14px", color: "lightgray" }}>AMOUNT</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data?.map((row) => (
                 <TableRow
                   key={row.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 }, '& > td': { border: 0, fontSize: 12}, background: '#111722'}}
                 >
+                  <TableCell scope="row">{timeConverter(row.timestamp)}</TableCell>
                   <StyledCell scope="row" sell={row.side === 'sell'}>
                     {row.price}
                   </StyledCell>
                   <TableCell scope="row">{row.amount}</TableCell>
-                  <TableCell scope="row">{timeConverter(row.timestamp)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

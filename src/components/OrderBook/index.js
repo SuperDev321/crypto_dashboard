@@ -149,21 +149,22 @@ export default function OrderBook() {
           <TableContainer style={{ height: 'max-content'}} component={Paper}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
-                <TableRow>
-                  <TableCell component="th" style={{ maxWidth: 150 }}>Total</TableCell>
-                  <TableCell component="th" style={{ maxWidth: 150 }}>Amount</TableCell>
-                  <TableCell component="th" style={{ maxWidth: 150 }}>Price</TableCell>
+                <TableRow style={{ backgroundColor: '#111722', border: '1px solid gray'}}>
+                  <TableCell component="th" style={{ fontSize: "14px", color: "lightgray", maxWidth: 150 }}>TOTAL</TableCell>
+                  <TableCell component="th" style={{ fontSize: "14px", color: "lightgray", maxWidth: 150 }}>AMOUNT</TableCell>
+                  <TableCell component="th" style={{ fontSize: "14px", color: "lightgray", maxWidth: 150 }}>ASK</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {bids?.map(({ price, amount, total, totalPrice }, index) => (
                   <BidTableRow
                     key={price + '-' + amount}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0, }, '& > td': { border: 0, fontSize: 12} }}
                     percent={totalPrice / bidMaxVolume * 100}
                     price={price}
                     amount={amount}
-                    total={total}
+                    total={total?.toFixed(4)}
+                    style={{border: 'none'}}
                   >
                   </BidTableRow>
                 ))}
@@ -175,21 +176,22 @@ export default function OrderBook() {
           <TableContainer  style={{ height: 'max-content'}} component={Paper}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
-                <TableRow>
-                  <TableCell>Total</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Price</TableCell>
+                <TableRow style={{ backgroundColor: '#111722', border: '1px solid gray'}}>
+                  <TableCell style={{ fontSize: "14px", color: "lightgray" }}>TOTAL</TableCell>
+                  <TableCell style={{ fontSize: "14px", color: "lightgray" }}>AMOUNT</TableCell>
+                  <TableCell style={{ fontSize: "14px", color: "lightgray" }}>BID</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {asks?.map(({ price, amount, total, totalPrice }, index) => (
                   <AskTableRow
                     key={price + '-' + amount}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0}, '& > td': { border: 0, fontSize: 12 } }}
                     percent={totalPrice / askMaxVolume * 100}
                     price={price}
                     amount={amount}
-                    total={total}
+                    total={total?.toFixed(4)}
+                    style={{ border: 'none', backgroundColor: '#111722' }}
                   >
                   </AskTableRow>
                 ))}

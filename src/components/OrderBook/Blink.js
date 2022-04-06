@@ -2,12 +2,30 @@
 import { styled, TableCell, TableRow } from "@mui/material"
 
 const BlueTableRow = styled(TableRow)((props) => ({
-  backgroundImage: `linear-gradient(to left, rgba(2, 199, 122, 0.25), rgba(2, 199, 122, 0.4) ${props.percent}%, rgba(2, 199, 122,  ${props.state? '0.05' : '0'}) ${props.percent}%)`
+  backgroundImage: `linear-gradient(to left, rgba(2, 199, 122, 0.25), rgba(2, 199, 122, 0.4) ${props.percent}%, rgba(2, 199, 122,  ${props.state? '0.05' : '0'}) ${props.percent}%)`,
+  '& > td': {
+    border: 'none',
+    fontSize: 12
+  },
+  backgroundColor: '#111722'
 }))
 
 const RedTableRow = styled(TableRow)((props) => ({
-  backgroundImage: `linear-gradient(to left, rgba(247, 57, 105, 0.25), rgba(247, 57, 105, 0.25) ${props.percent}%, rgba(247, 57, 105, ${props.state? '0.05' : '0'}) ${props.percent}%)`
+  backgroundImage: `linear-gradient(to left, rgba(247, 57, 105, 0.25), rgba(247, 57, 105, 0.25) ${props.percent}%, rgba(247, 57, 105, ${props.state? '0.05' : '0'}) ${props.percent}%)`,
+  '& > td': {
+    border: 'none',
+    fontSize: 12
+  },
+  backgroundColor: '#111722'
 }))
+
+// const TradeTableRow = styled(TableRow)((props) => ({
+//   backgroundImage: `linear-gradient(to left, rgba(247, 57, 105, 0.25), rgba(247, 57, 105, 0.25) ${props.percent}%, rgba(247, 57, 105, ${props.state? '0.05' : '0'}) ${props.percent}%)`,
+//   '& > td': {
+//     border: 'none'
+//   },
+//   backgroundColor: '#111722',
+// }))
 
 const BidTableRow = ({ percent, price, amount, total }) => {
   // const [state, setState] = useState(false)
