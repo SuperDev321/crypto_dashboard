@@ -155,8 +155,9 @@ const getPriceTickers = async (assetArr) => {
   // } catch (err) {
   //   return null
   // }
+  const assets = assetArr.map(({ symbol }) => symbol)
   return axios.post(`${config.backend_url}/api/price/tickers`, {
-    assetArr
+    assetArr: assets
   })
     .then((response) => {
       if (response && response.data) {
