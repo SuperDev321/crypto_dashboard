@@ -1,5 +1,5 @@
 const config = {
-  backend_url: 'https://188.166.91.139:3000',
+  backend_url: 'https://cryptodashboard.space',
 }
 
 export default config
