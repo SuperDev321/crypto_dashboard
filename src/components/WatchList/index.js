@@ -7,6 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
 import { getPriceTickers, getWatchList, removeWatchList, saveWatchList } from "../../api";
 import SignColorText from "../SignColorText";
 import TradeContext from "../../context/TradeContext";
@@ -20,7 +21,6 @@ const columns = [
   { id: 'price', label: 'Price', minWidth: 100 },
   { id: 'change', label: 'Change', minWidth: 100 },
   { id: 'volume', label: 'Volume', minWidth: 100 },
-  { id: 'action', label: 'Action', minWidth: 100 }
 ];
 
 const arrayReducer = (state, action) => {
@@ -52,17 +52,19 @@ export default function StickyHeadTable() {
   const { userId } = useContext(AuthContext)
 
   const addAsset = (asset) => {
-    const { id, symbol, base, quote } = asset
-    if (!watchList?.some(({ symbol }) => symbol === asset.symbol)) {
-      saveWatchList(userId, [...assets, { id, symbol, base, quote }])
-        .then(() => {
-          setAssests([...assets, asset])
-        })
+    if (asset && userId) {
+      const { id, symbol, base, quote } = asset
+      if (!watchList?.some(({ symbol }) => symbol === asset.symbol)) {
+        saveWatchList(userId, [...assets, { id, symbol, base, quote }])
+          .then(() => {
+            setAssests([...assets, asset])
+          })
+      }
     }
   }
 
   const removeAsset = (id) => {
-    if (watchList?.some((item) => item.id === id)) {
+    if (userId && watchList?.some((item) => item.id === id)) {
       removeWatchList(userId, id)
         .then(() => {
           setAssests(assets.filter((asset) => asset.id !== id))
@@ -79,12 +81,13 @@ export default function StickyHeadTable() {
   }, [watchList, tradeSymbol, setTradeSymbol, assets])
 
   useEffect(() => {
-    getWatchList(userId)
-      .then((data) => {
-        if (data && data.watchList) {
-          setAssests(data.watchList)
-        }
-      })
+    if (userId) 
+      getWatchList(userId)
+        .then((data) => {
+          if (data && data.watchList) {
+            setAssests(data.watchList)
+          }
+        })
   }, [userId])
 
   useEffect(() => {
@@ -138,31 +141,30 @@ export default function StickyHeadTable() {
           <TableBody>
             {watchList && watchList.map((row) => {
                 return (
-                  <TableRow hover tabIndex={-1} key={row.code} onClick={() => {
-                    setTradeSymbol(row)
-                  }}>
-                    <TableCell align='left'>
-                      {row.symbol}
-                    </TableCell>
-                    <TableCell align='left'>
-                      {row.base}
-                    </TableCell>
-                    <TableCell align='left'>
-                      {row.quote}
-                    </TableCell>
-                    <TableCell align='left'>
-                      {row.last}
-                    </TableCell>
-                    <TableCell align='left'>
-                      <SignColorText>{row.percentage}</SignColorText>
-                    </TableCell>
-                    <TableCell align='left'>
-                      {row?.info?.volume}
-                    </TableCell>
-                    <TableCell align='left'>
-                      <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => removeAsset(row.id)}></DeleteIcon>
-                    </TableCell>
-                  </TableRow>
+                  <Tooltip placement="right" title={<DeleteIcon style={{ cursor: 'pointer' }} onClick={() => removeAsset(row.id)}></DeleteIcon>}>
+                    <TableRow hover tabIndex={-1} key={row.code} onClick={() => {
+                      setTradeSymbol(row)
+                    }}>
+                      <TableCell align='left'>
+                        {row.symbol}
+                      </TableCell>
+                      <TableCell align='left'>
+                        {row.base}
+                      </TableCell>
+                      <TableCell align='left'>
+                        {row.quote}
+                      </TableCell>
+                      <TableCell align='left'>
+                        {row.last}
+                      </TableCell>
+                      <TableCell align='left'>
+                        <SignColorText>{row.percentage}</SignColorText>
+                      </TableCell>
+                      <TableCell align='left'>
+                        {row?.info?.volume}
+                      </TableCell>
+                    </TableRow>
+                  </Tooltip>
                 );
               })}
           </TableBody>

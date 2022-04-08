@@ -11,6 +11,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { getViewConfig, saveViewConfig } from "../api";
 import useAuth from "../hooks/useAuth";
 import AuthContext from "../context/AuthContext";
+import Header from "../components/Header";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -36,7 +37,9 @@ const StyledDiv = styled(Paper)(() => ({
 
 const Dashboard = () => {
   const [tradeSymbol, setTradeSymbol] = useState({ id: 'ETHUSDT', symbol: 'ETH/USDT' })
-  const { userId } = useAuth()
+  const { user, logout, loading } = useAuth()
+
+  const userId = user?.uid
   const [watchList, setWatchList] = useState([])
   const [viewConfig, setViewConfig] = useState()
 
@@ -55,7 +58,7 @@ const Dashboard = () => {
   );
 
   const handleChangeLayout = (layout, _layouts) => {
-    saveViewConfig(userId, _layouts)
+    if (userId) saveViewConfig(userId, _layouts)
   }
 
   useEffect(() => {
@@ -70,12 +73,15 @@ const Dashboard = () => {
         .catch(() => {
           setViewConfig(layouts)
         })
+    } else if (!loading) {
+      setViewConfig(layouts)
     }
-  }, [userId])
+  }, [userId, loading])
 
   return (
     <ThemeProvider theme={theme}>
-      <AuthContext.Provider value={{ userId }}>
+      <AuthContext.Provider value={{ userId, user, logout }}>
+        <Header />
         <TradeContext.Provider value={{ tradeSymbol, setTradeSymbol, watchList, setWatchList }}>
           {viewConfig && <ResponsiveGridLayout
               className="layout"
